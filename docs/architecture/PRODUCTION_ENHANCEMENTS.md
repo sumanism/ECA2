@@ -175,11 +175,6 @@ read_engine = create_engine(
 3. Dual-write period for validation
 4. Gradual cutover
 
-**Time Estimate**: 8-12 hours
-- Schema migration: 2-3 hours
-- Data migration script: 2-3 hours
-- Testing & validation: 3-4 hours
-- Deployment: 1-2 hours
 
 ---
 
@@ -212,7 +207,6 @@ CREATE INDEX idx_campaign_start_date ON "campaign"(start_date);
 CREATE INDEX idx_user_segment_eval ON "user"(marketing_opt_in, shipping_state, total_order_value);
 ```
 
-**Time Estimate**: 2-3 hours
 
 ---
 
@@ -223,7 +217,6 @@ CREATE INDEX idx_user_segment_eval ON "user"(marketing_opt_in, shipping_state, t
 - Separate pools for read/write operations
 - Connection health checks
 
-**Time Estimate**: 1-2 hours
 
 ---
 
@@ -294,12 +287,6 @@ CELERY_TASK_ROUTES = {
 - ✅ Priority queues
 - ✅ Dead letter queues for failed jobs
 
-**Time Estimate**: 12-16 hours
-- Celery setup: 2-3 hours
-- Task implementation: 4-6 hours
-- Worker configuration: 2-3 hours
-- Testing & monitoring: 3-4 hours
-- Deployment: 1 hour
 
 ---
 
@@ -333,7 +320,6 @@ celery_app.conf.beat_schedule = {
 }
 ```
 
-**Time Estimate**: 4-6 hours
 
 ---
 
@@ -381,11 +367,6 @@ def invalidate_segment_cache(segment_id: str):
     redis_client.delete(f"segment:{segment_id}:users")
 ```
 
-**Cache Strategy**:
-- **Segment Results**: TTL 1 hour, invalidate on segment update
-- **User Metrics**: TTL 30 minutes, invalidate on order creation
-- **AI Responses**: TTL 24 hours (prompts are deterministic)
-- **Campaign Status**: TTL 5 minutes
 
 **Benefits**:
 - ✅ 90% reduction in database queries
@@ -393,11 +374,6 @@ def invalidate_segment_cache(segment_id: str):
 - ✅ Reduced database load
 - ✅ Better scalability
 
-**Time Estimate**: 6-8 hours
-- Redis setup: 1 hour
-- Cache implementation: 3-4 hours
-- Cache invalidation logic: 1-2 hours
-- Testing: 1 hour
 
 ---
 
@@ -410,7 +386,6 @@ def invalidate_segment_cache(segment_id: str):
 - Top products
 - Customer lists with filters
 
-**Time Estimate**: 2-3 hours
 
 ---
 
@@ -422,8 +397,6 @@ def invalidate_segment_cache(segment_id: str):
 - ✅ Reduced server load
 - ✅ Faster page loads globally
 - ✅ Better caching
-
-**Time Estimate**: 1-2 hours
 
 ---
 
@@ -466,7 +439,6 @@ def create_campaign(...):
 - Segment evaluation: 20/minute
 - AI generation: 5/minute (cost control)
 
-**Time Estimate**: 4-6 hours
 
 ---
 
@@ -508,11 +480,6 @@ async def get_current_user(token: str = Depends(security)):
 - **Manager**: Create/edit campaigns, view analytics
 - **Viewer**: Read-only access
 
-**Time Estimate**: 8-10 hours
-- JWT implementation: 3-4 hours
-- Role-based access control: 2-3 hours
-- Integration with existing auth: 2-3 hours
-- Testing: 1 hour
 
 ---
 
@@ -555,8 +522,6 @@ async def send_webhook(url: str, event: str, data: Dict[str, Any]):
 - `email.sent`
 - `email.failed`
 
-**Time Estimate**: 6-8 hours
-
 ---
 
 #### 4.4 Event-Driven Architecture
@@ -590,7 +555,6 @@ class SegmentEvaluatedEvent:
 - ✅ Easy to add new integrations
 - ✅ Scalable event processing
 
-**Time Estimate**: 8-10 hours
 
 ---
 
@@ -624,7 +588,6 @@ def log_with_context(func):
 
 **Log Aggregation**: Send logs to centralized system (ELK, Loki, CloudWatch)
 
-**Time Estimate**: 4-6 hours
 
 ---
 
@@ -651,7 +614,6 @@ campaign_executions = Counter('campaign_executions_total', 'Campaign executions'
 segment_evaluations = Histogram('segment_evaluation_seconds', 'Segment evaluation time')
 ```
 
-**Time Estimate**: 6-8 hours
 
 ---
 
@@ -696,7 +658,7 @@ async def readiness_check():
     )
 ```
 
-**Time Estimate**: 2-3 hours
+
 
 ---
 
@@ -730,7 +692,6 @@ def get_write_session():
     return Session(engine)
 ```
 
-**Time Estimate**: 4-6 hours
 
 ---
 
@@ -750,7 +711,6 @@ def get_write_session():
 - Independent deployment needs
 - Technology diversity
 
-**Time Estimate**: 40-60 hours (if needed)
 
 ---
 
@@ -765,8 +725,6 @@ def get_write_session():
 - SQL injection prevention (✅ SQLModel handles this)
 - XSS prevention in API responses
 - File upload validation (if needed)
-
-**Time Estimate**: 2-3 hours
 
 ---
 
@@ -787,15 +745,12 @@ async def add_security_headers(request, call_next):
     return response
 ```
 
-**Time Estimate**: 1 hour
-
 ---
 
 #### 7.3 Secrets Management
 
 **Enhancement**: Use secrets management service (AWS Secrets Manager, HashiCorp Vault)
 
-**Time Estimate**: 2-3 hours
 
 ---
 
@@ -816,7 +771,6 @@ async def call_ai_api(prompt: str):
     pass
 ```
 
-**Time Estimate**: 3-4 hours
 
 ---
 
@@ -837,7 +791,6 @@ async def send_email_with_retry(email_data):
     pass
 ```
 
-**Time Estimate**: 2-3 hours
 
 ---
 
@@ -845,7 +798,6 @@ async def send_email_with_retry(email_data):
 
 **Enhancement**: DLQ for failed jobs
 
-**Time Estimate**: 2-3 hours
 
 ---
 
@@ -874,19 +826,12 @@ async def sync_customers_from_external_system():
         update_user_metrics(user, customer_data)
 ```
 
-**Time Estimate**: 12-16 hours
-- API integration: 4-6 hours
-- Data mapping: 2-3 hours
-- Sync logic: 3-4 hours
-- Testing: 2-3 hours
-
 ---
 
 #### 9.2 Order Data Sync
 
 **Enhancement**: Sync order data for metrics calculation
 
-**Time Estimate**: 8-10 hours
 
 ---
 
@@ -903,7 +848,6 @@ class EmailService:
         pass
 ```
 
-**Time Estimate**: 4-6 hours
 
 ---
 
@@ -911,7 +855,6 @@ class EmailService:
 
 **Enhancement**: Send campaign metrics to analytics platform
 
-**Time Estimate**: 4-6 hours
 
 ---
 
@@ -935,7 +878,6 @@ COPY . .
 CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-**Time Estimate**: 2-3 hours
 
 ---
 
@@ -949,7 +891,6 @@ CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
 - ✅ Rolling updates
 - ✅ Resource management
 
-**Time Estimate**: 16-20 hours
 
 ---
 
@@ -966,7 +907,6 @@ CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
 6. E2E tests
 7. Deploy to production (manual approval)
 
-**Time Estimate**: 8-12 hours
 
 ---
 
@@ -980,7 +920,6 @@ CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
 5. ✅ Rate limiting (4-6 hours)
 6. ✅ Health checks (2-3 hours)
 
-**Total**: 40-55 hours
 
 ### Phase 2: Performance & Scalability (Weeks 3-4)
 1. ✅ Database indexing (2-3 hours)
@@ -989,7 +928,6 @@ CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
 4. ✅ Structured logging (4-6 hours)
 5. ✅ Circuit breakers (3-4 hours)
 
-**Total**: 19-27 hours
 
 ### Phase 3: Integration & Reliability (Weeks 5-6)
 1. ✅ External system integration (12-16 hours)
@@ -998,7 +936,6 @@ CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
 4. ✅ Dead letter queue (2-3 hours)
 5. ✅ Email service integration (4-6 hours)
 
-**Total**: 26-36 hours
 
 ### Phase 4: Advanced Features (Weeks 7-8)
 1. ✅ Event-driven architecture (8-10 hours)
@@ -1006,7 +943,6 @@ CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
 3. ✅ CDN setup (1-2 hours)
 4. ✅ Security enhancements (3-4 hours)
 
-**Total**: 16-22 hours
 
 ---
 
@@ -1020,7 +956,6 @@ CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
 | Phase 4: Advanced | 16-22 hours | 🟢 Low |
 | **Total** | **101-140 hours** | |
 
-**Estimated Timeline**: 8-10 weeks with 1-2 developers
 
 ---
 
@@ -1082,3 +1017,4 @@ These architectural enhancements transform the CDP Assistant from a prototype in
 
 *Document Version: 1.0*  
 *Last Updated: 2024*
+
